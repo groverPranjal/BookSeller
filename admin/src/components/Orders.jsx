@@ -332,12 +332,101 @@ function Orders() {
                         <img src={`${API_BASE}${bk.image}`} alt={bk.title} 
                         className="w-16 h-20 object-cover rounded"/>
                         <div className="flex-1 px-4">
-                          <p className=""></p>
+                          <p className="font-medium">{bk.title}</p>
+                          <p className="text-sm text-gray-500">Author:{bk.author}</p>
+                          <p className="text-xs text-gray-400">ID:{bk.book}</p>
                         </div>
+
+                        <div className="text-right">
+                          <p> Qty: {bk.quantity}</p>
+                          <p className="text-sm">₹{book.price.toFixed(2)} each</p>
+
+                        </div>
+                      </div>
+                    ))}
+
+                    <div className="pt-4 space-y-2">
+                      {[
+                        
+                                       { label: "Subtotal:", value: `₹${selectedOrder.totalAmount.toFixed(2)}` },
+                      { label: "Shipping:", value: `₹${selectedOrder.shippingCharge.toFixed(2)}` },
+                      { label: "Tax (5%):", value: `₹${selectedOrder.taxAmount.toFixed(2)}` },
+                      { label: "Total:", value: `₹${selectedOrder.finalAmount.toFixed(2)}`, isTotal: true },
+
+                      ].map((it,i)=>(
+                        <div key={i} className={s.totalItem.apply(it.isTotal)}>
+                          <span className={s.totalLabel}>{it.label}</span>
+                          <span className={s.totalValue(it.isTotal)}>
+                            {it.value}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div className={s.modalSection}>
+                  <h3 className={s.sectionTitle}>
+                    <CreditCard className={s.sectionIcon}/>
+                    Payment Information
+                  </h3>
+                  <div className={s.sectionContent}>
+                    {[
+                            { 
+                      label: "Method:", 
+                      value: selectedOrder.paymentMethod,
+                      color: selectedOrder.paymentMethod === "Online Payment" ? 
+                        "bg-purple-100 text-purple-800" : "bg-orange-100 text-orange-800"
+                    },
+                    { 
+                      label: "Status:", 
+                      value: selectedOrder.paymentStatus,
+                      color: selectedOrder.paymentStatus === "Paid" ? 
+                        "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"
+                    },
+                    ].map((it,i)=>(
+                      <div key={i} className={s.paymentInfoItem}>
+                        <span className={s.paymentLabel}>{it.label}</span>
+                        <span className={s.paymentBadge(it.color)}>
+                          {it.value}
+                        </span>
                       </div>
                     ))}
                   </div>
                 </div>
+
+                <div className={s.modalSection}>
+                  <h3 className={s.sectionTitle}>
+                    <Edit className={s.sectionIcon}/>
+                    Update Order Status
+                  </h3>
+                  <div>
+                    <label className={s.statusLabel}>Order Status</label>
+                    <select value={selectedOrder.orderStatus} onChange={(e)=>{
+                      const  newStatus =e.target.value;
+                      setSelectedOrder({...selectedOrder,orderStatus:newStatus});
+                      updateStatus(selectedOrder._id,newStatus);
+
+                    }} className={s.statusSelect}>
+                      {
+                        statusOptions.map((opt)=>(
+                          <option value={opt.label} key={opt.value}>{opt.label}</option>
+                        ))
+                      }
+                    </select>
+                  </div>
+                </div>
+              </div>
+              {/* close the view model */}
+
+              <div className={s.modalFooter}>
+                <button onClick={()=>setSelectedOrder(null)} className={s.footerButtonClose}>
+                  Close
+                </button>
+
+                <button onClick={()=>setSelectedOrder(null)} className={s.footerButtonSave}>
+                  Save Changes
+                </button>
               </div>
             </div>
            </div>
